@@ -71,7 +71,7 @@ export const Hero: React.FC<HeroProps> = ({
 
       {/* Ambient Lighting & Particles */}
       <div className="absolute top-20 right-10 w-[500px] h-[500px] bg-primary-600/15 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-20 left-10 w-[400px] h-[400px] bg-brand-cyan/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-20 left-10 w-[400px] h-[400px] bg-cyan-400/10 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Main Hero Content Area */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-32 md:pt-24 md:pb-40">

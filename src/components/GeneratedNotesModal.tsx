@@ -4,9 +4,15 @@ import {
   CheckCircle2, 
   Copy, 
   Check, 
-  ShieldCheck 
+  Download,
+  ShieldCheck,
+  ExternalLink,
+  Code2,
+  FileText
 } from 'lucide-react';
 import { ReleaseFormData } from './ReleaseForm';
+import { Badge } from './ui/Badge';
+import { Button } from './ui/Button';
 
 interface GeneratedNotesModalProps {
   isOpen: boolean;
@@ -20,6 +26,7 @@ export const GeneratedNotesModal: React.FC<GeneratedNotesModalProps> = ({
   data,
 }) => {
   const [copied, setCopied] = useState(false);
+  const [downloaded, setDownloaded] = useState(false);
   const [activeTab, setActiveTab] = useState<'preview' | 'audit' | 'raw'>('preview');
 
   if (!isOpen) return null;
@@ -34,15 +41,15 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
 
 ### 🚀 Highlights & Features
 - **Server Actions Streaming Transitions**: Enabled native streaming transitions with fine-grained suspense boundaries ([#1422](https://github.com/${repoName}/pull/1422))
-  - *Evidence diff*: \`packages/react-client/src/ReactFlightClient.js:412\`
+  - *Evidence diff*: \`packages/react-client/src/ReactFlightClient.js:412\` (Status: Verified)
 - **Hydration Error Context Diagnostics**: Error messages now pin the exact DOM mismatch line and column ([#1429](https://github.com/${repoName}/pull/1429))
-  - *Evidence diff*: \`packages/react-dom/src/client/ReactDOMComponent.js:889\`
+  - *Evidence diff*: \`packages/react-dom/src/client/ReactDOMComponent.js:889\` (Status: Verified)
 
 ### 🐛 Bug Fixes
 - **Memory Leak in useDeferredValue**: Resolved closure retention of previous fibers when component unmounts mid-transition ([#1435](https://github.com/${repoName}/pull/1435))
-  - *Evidence diff*: \`packages/react-reconciler/src/ReactFiberHooks.js:1240\`
+  - *Evidence diff*: \`packages/react-reconciler/src/ReactFiberHooks.js:1240\` (Status: Verified)
 - **Concurrent Root Priority Inversion**: Corrected lane assignment for sync updates scheduled during discrete events ([#1412](https://github.com/${repoName}/pull/1412))
-  - *Evidence diff*: \`packages/react-reconciler/src/ReactFiberWorkLoop.js:671\`
+  - *Evidence diff*: \`packages/react-reconciler/src/ReactFiberWorkLoop.js:671\` (Status: Verified)
 
 ### 🛡️ GitWise Audit Summary
 - Merged PRs analyzed: 28
@@ -57,27 +64,42 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleDownload = () => {
+    const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `release-notes-${repoName.replace('/', '-')}-${data?.startDate || 'run'}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setDownloaded(true);
+    setTimeout(() => setDownloaded(false), 2000);
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div 
         className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
         role="dialog"
         aria-modal="true"
+        aria-labelledby="modal-title"
       >
         {/* Modal Header */}
-        <div className="bg-navy-900 px-6 py-4 flex items-center justify-between border-b border-navy-800 text-white">
+        <div className="bg-[#0B1220] px-6 py-4 flex items-center justify-between border-b border-slate-800 text-white">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-brand-orange flex items-center justify-center text-white shadow-sm">
-              <ShieldCheck className="w-5 h-5" />
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm">
+              <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white tracking-tight">
-                  Verified Release Notes Preview
+                <h3 id="modal-title" className="text-base font-bold text-white tracking-tight">
+                  Verified Release Notes Document
                 </h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                <Badge variant="verified" size="sm">
                   PASSED AUDIT
-                </span>
+                </Badge>
               </div>
               <p className="text-xs text-slate-400">
                 {repoName} • {dateRange} • {releaseType}
@@ -88,17 +110,28 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={handleCopy}
-              className="px-3 py-1.5 rounded-lg bg-navy-800 hover:bg-navy-700 text-xs font-medium text-slate-200 border border-slate-700 flex items-center gap-1.5 transition-colors"
+              onClick={handleDownload}
+              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 flex items-center gap-1.5 transition-colors"
+              title="Download Markdown file"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-brand-orange" />}
-              <span>{copied ? 'Copied' : 'Copy Markdown'}</span>
+              {downloaded ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Download className="w-3.5 h-3.5 text-blue-400" />}
+              <span className="hidden sm:inline">{downloaded ? 'Downloaded' : 'Download'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 flex items-center gap-1.5 transition-colors"
+              title="Copy to clipboard"
+            >
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-blue-400" />}
+              <span>{copied ? 'Copied' : 'Copy'}</span>
             </button>
 
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-navy-800 transition-colors"
+              className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors ml-1"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />
@@ -108,7 +141,7 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
 
         {/* Verification Pipeline Step Tracker */}
         <div className="bg-slate-50 border-b border-slate-200 px-6 py-3">
-          <div className="grid grid-cols-4 gap-2 sm:gap-4 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
               <div>
@@ -148,7 +181,7 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
               onClick={() => setActiveTab('preview')}
               className={`pb-2.5 text-xs font-semibold border-b-2 transition-colors ${
                 activeTab === 'preview'
-                  ? 'border-brand-orange text-navy-900'
+                  ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
@@ -159,7 +192,7 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
               onClick={() => setActiveTab('audit')}
               className={`pb-2.5 text-xs font-semibold border-b-2 transition-colors ${
                 activeTab === 'audit'
-                  ? 'border-brand-orange text-navy-900'
+                  ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
@@ -170,7 +203,7 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
               onClick={() => setActiveTab('raw')}
               className={`pb-2.5 text-xs font-semibold border-b-2 transition-colors ${
                 activeTab === 'raw'
-                  ? 'border-brand-orange text-navy-900'
+                  ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
@@ -192,7 +225,7 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
               {/* Release Header */}
               <div className="border-b border-slate-100 pb-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold text-navy-900">
+                  <h2 className="text-xl font-bold text-slate-900">
                     Release Notes — {repoName}
                   </h2>
                   <span className="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-1 rounded">
@@ -206,44 +239,42 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
 
               {/* Section 1: Features */}
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800 mb-3 flex items-center gap-2">
-                  <span className="text-brand-orange">⚡</span>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
                   <span>Features & Enhancements</span>
                 </h3>
                 <ul className="space-y-3 text-sm text-slate-700">
-                  <li className="p-3 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
+                  <li className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <span className="font-semibold text-slate-900">Server Actions Streaming Transitions:</span>
                         {' '}Enabled native streaming transitions with fine-grained suspense boundaries.
                       </div>
-                      <span className="inline-flex items-center gap-1 font-mono text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded flex-shrink-0">
-                        <CheckCircle2 className="w-3 h-3" />
+                      <Badge variant="verified" size="sm">
                         PR #1422
-                      </span>
+                      </Badge>
                     </div>
-                    <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2">
+                    <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
                       <span className="text-slate-400">Diff Hunk:</span>
-                      <span className="bg-white px-1.5 py-0.5 rounded border border-slate-200 text-slate-600">
+                      <span className="text-slate-700 break-all">
                         packages/react-client/src/ReactFlightClient.js:412
                       </span>
                     </div>
                   </li>
 
-                  <li className="p-3 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
+                  <li className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <span className="font-semibold text-slate-900">Hydration Error Context Diagnostics:</span>
                         {' '}Error messages now pin the exact DOM mismatch line and column coordinates.
                       </div>
-                      <span className="inline-flex items-center gap-1 font-mono text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded flex-shrink-0">
-                        <CheckCircle2 className="w-3 h-3" />
+                      <Badge variant="verified" size="sm">
                         PR #1429
-                      </span>
+                      </Badge>
                     </div>
-                    <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2">
+                    <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
                       <span className="text-slate-400">Diff Hunk:</span>
-                      <span className="bg-white px-1.5 py-0.5 rounded border border-slate-200 text-slate-600">
+                      <span className="text-slate-700 break-all">
                         packages/react-dom/src/client/ReactDOMComponent.js:889
                       </span>
                     </div>
@@ -253,44 +284,42 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
 
               {/* Section 2: Bug Fixes */}
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800 mb-3 flex items-center gap-2">
-                  <span className="text-emerald-600">🛡️</span>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
                   <span>Bug Fixes</span>
                 </h3>
                 <ul className="space-y-3 text-sm text-slate-700">
-                  <li className="p-3 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
+                  <li className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <span className="font-semibold text-slate-900">Memory Leak in useDeferredValue:</span>
                         {' '}Resolved closure retention of previous fibers when component unmounts mid-transition.
                       </div>
-                      <span className="inline-flex items-center gap-1 font-mono text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded flex-shrink-0">
-                        <CheckCircle2 className="w-3 h-3" />
+                      <Badge variant="verified" size="sm">
                         PR #1435
-                      </span>
+                      </Badge>
                     </div>
-                    <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2">
+                    <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
                       <span className="text-slate-400">Diff Hunk:</span>
-                      <span className="bg-white px-1.5 py-0.5 rounded border border-slate-200 text-slate-600">
+                      <span className="text-slate-700 break-all">
                         packages/react-reconciler/src/ReactFiberHooks.js:1240
                       </span>
                     </div>
                   </li>
 
-                  <li className="p-3 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
+                  <li className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <span className="font-semibold text-slate-900">Concurrent Root Priority Inversion:</span>
                         {' '}Corrected lane assignment for sync updates scheduled during discrete events.
                       </div>
-                      <span className="inline-flex items-center gap-1 font-mono text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded flex-shrink-0">
-                        <CheckCircle2 className="w-3 h-3" />
+                      <Badge variant="verified" size="sm">
                         PR #1412
-                      </span>
+                      </Badge>
                     </div>
-                    <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2">
+                    <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
                       <span className="text-slate-400">Diff Hunk:</span>
-                      <span className="bg-white px-1.5 py-0.5 rounded border border-slate-200 text-slate-600">
+                      <span className="text-slate-700 break-all">
                         packages/react-reconciler/src/ReactFiberWorkLoop.js:671
                       </span>
                     </div>
@@ -310,12 +339,12 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-emerald-900">Evidence Audit Passed (4/4 Claims Grounded)</h4>
-                    <p className="text-xs text-emerald-700">No fabricated assertions or dropped PRs detected.</p>
+                    <p className="text-xs text-emerald-700">No fabricated assertions or dropped PRs detected in repository AST.</p>
                   </div>
                 </div>
-                <span className="text-xs font-mono font-bold bg-white px-3 py-1 rounded text-emerald-800 border border-emerald-200">
+                <Badge variant="verified" size="md">
                   PASS RATE: 100%
-                </span>
+                </Badge>
               </div>
 
               <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100 shadow-sm">
@@ -353,7 +382,7 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
 
           {activeTab === 'raw' && (
             <div className="relative">
-              <pre className="bg-navy-950 text-slate-200 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800">
+              <pre className="bg-[#0B1220] text-slate-200 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800">
                 {markdownContent}
               </pre>
             </div>
@@ -362,28 +391,40 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
         </div>
 
         {/* Modal Footer */}
-        <div className="bg-white border-t border-slate-200 px-6 py-4 flex items-center justify-between">
+        <div className="bg-white border-t border-slate-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="text-xs text-slate-500 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-brand-orange" />
+            <span className="w-2 h-2 rounded-full bg-blue-600" />
             <span>Interactive Sample Data • Ready for Production GitHub Webhook connection</span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <Button
               type="button"
-              onClick={handleCopy}
-              className="px-4 py-2 bg-brand-orange hover:bg-brand-orange-hover text-white text-xs font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-1.5"
+              variant="outline"
+              size="sm"
+              onClick={handleDownload}
+              leftIcon={downloaded ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Download className="w-3.5 h-3.5" />}
             >
-              <Copy className="w-3.5 h-3.5" />
-              <span>{copied ? 'Copied' : 'Copy Release Notes'}</span>
-            </button>
-            <button
+              {downloaded ? 'Downloaded' : 'Download .md'}
+            </Button>
+
+            <Button
               type="button"
+              size="sm"
+              onClick={handleCopy}
+              leftIcon={copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            >
+              {copied ? 'Copied' : 'Copy Release Notes'}
+            </Button>
+
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
               onClick={onClose}
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors"
             >
               Done
-            </button>
+            </Button>
           </div>
         </div>
 
