@@ -24,7 +24,7 @@ export const App: React.FC = () => {
   });
 
   const handleScrollToForm = () => {
-    const el = document.getElementById('generate-form');
+    const el = document.getElementById('workspace') || document.getElementById('generate-form');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
       const input = document.getElementById('repoUrl');

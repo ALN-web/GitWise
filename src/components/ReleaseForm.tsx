@@ -112,7 +112,8 @@ Verification Engine: GitWise Dual-Pass AST Auditor
   };
 
   return (
-    <section id="generate-form" className="py-20 bg-white border-b border-surface-border">
+    <section id="workspace" className="scroll-mt-24 py-20 bg-white border-b border-surface-border">
+      <div id="generate-form" className="scroll-mt-24" />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Workspace Card with Modern Shadow */}

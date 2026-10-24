@@ -47,7 +47,7 @@ export const ServiceCardsSection: React.FC<ServiceCardsSectionProps> = ({ onSele
   ];
 
   return (
-    <section id="capabilities" className="py-24 bg-surface-light border-b border-surface-border">
+    <section id="capabilities" className="scroll-mt-24 py-24 bg-surface-light border-b border-surface-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Centered Section Header matching reference */}

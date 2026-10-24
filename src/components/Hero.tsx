@@ -56,7 +56,7 @@ export const Hero: React.FC<HeroProps> = ({
   ];
 
   return (
-    <section id="overview" className="relative bg-navy-900 text-white overflow-hidden">
+    <section id="overview" className="scroll-mt-24 relative bg-navy-900 text-white overflow-hidden">
       
       {/* Cinematic Background Image with Gradient Overlay matching reference */}
       <div className="absolute inset-0 z-0">
