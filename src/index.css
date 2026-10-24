@@ -5,32 +5,70 @@
 @layer base {
   body {
     @apply bg-surface-light text-surface-text font-sans antialiased;
-    color: #172033;
+    color: #0F172A;
   }
 }
 
-/* Custom subtle scrollbar */
+/* Custom modern scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f3f7;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #94a3b8;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #64748b;
 }
 
-/* Code card highlights */
-.code-bg-pattern {
-  background-image: radial-gradient(rgba(243, 107, 22, 0.12) 1px, transparent 1px), radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 24px 24px;
-  background-position: 0 0, 12px 12px;
+/* Button hover shimmer animation */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  transform: rotate(30deg) translateX(-100%);
+  transition: transform 0.75s ease-in-out;
+}
+
+.btn-shimmer:hover::after {
+  transform: rotate(30deg) translateX(100%);
+}
+
+/* Diagonal line slash for image banner matching reference */
+.diagonal-beam {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  transform: rotate(45deg) translate(-20%, -100%);
+  transform-origin: top left;
+}
+
+/* Glass card shine */
+.card-shine {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
+  backdrop-filter: blur(12px);
 }

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
+import { AboutSection } from './components/AboutSection';
+import { ServiceCardsSection } from './components/ServiceCardsSection';
 import { ReleaseForm, ReleaseFormData } from './components/ReleaseForm';
-import { CoreCapabilities } from './components/CoreCapabilities';
 import { VerificationSection } from './components/VerificationSection';
 import { EvaluationSection } from './components/EvaluationSection';
 import { Footer } from './components/Footer';
@@ -56,54 +57,58 @@ export const App: React.FC = () => {
       const el = document.getElementById('evaluation');
       if (el) el.scrollIntoView({ behavior: 'smooth' });
       else setIsEvaluationModalOpen(true);
-    } else if (id === 'independent-verification' || id === 'coverage-analysis') {
-      const el = document.getElementById('verification');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-      else setIsVerificationDrawerOpen(true);
-    } else if (id === 'github-research' || id === 'ai-drafting') {
+    } else if (id === 'independent-verification') {
+      handleExploreVerification();
+    } else if (id === 'github-research') {
       handleScrollToForm();
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-light text-surface-text selection:bg-brand-orange selection:text-white">
-      {/* 1. Compact Header */}
+    <div className="min-h-screen flex flex-col bg-surface-light text-surface-text selection:bg-primary-600 selection:text-white">
+      {/* 1. Top Bar & Header matching reference */}
       <Header
         onScrollToForm={handleScrollToForm}
+        onExploreVerification={handleExploreVerification}
         onOpenEvaluationModal={() => setIsEvaluationModalOpen(true)}
       />
 
       <main className="flex-grow">
-        {/* 2. Simplified Hero (2-column layout with unified preview panel) */}
+        {/* 2. Hero Section with 4 Overlapping Floating Cards matching reference */}
         <Hero
           onScrollToForm={handleScrollToForm}
           onExploreVerification={handleExploreVerification}
         />
 
-        {/* 3. Release Generation Form (Workspace panel, validation, presets) */}
+        {/* 3. Section 2: Split "About / Core Story" with Diagonal Slash & Blue Badge matching reference */}
+        <AboutSection
+          onExploreVerification={handleExploreVerification}
+        />
+
+        {/* 4. Section 3: "Our Services / Capabilities" with 3 Large Cards & Floating Circular Blue Badges */}
+        <ServiceCardsSection
+          onSelectCapability={handleSelectCapability}
+        />
+
+        {/* 5. Interactive Workspace Generation Form */}
         <ReleaseForm
           onGenerate={handleGenerate}
           isGenerating={isGenerating}
         />
 
-        {/* 4. Core Capabilities (5 clean cards, CSS mini diagrams, no stock imagery) */}
-        <CoreCapabilities
-          onSelectCapability={handleSelectCapability}
-        />
-
-        {/* 5. Verification: The Core Differentiator (Interactive evidence inspection) */}
+        {/* 6. Verification: The Core Differentiator (Interactive Evidence Inspector) */}
         <VerificationSection />
 
-        {/* 6. Evaluation Lab (Dedicated major feature section, test categories, comparison) */}
+        {/* 7. Dedicated Evaluation Lab Section (Adversarial Benchmark Runner) */}
         <EvaluationSection />
       </main>
 
-      {/* 7. Clean GitWise Footer */}
+      {/* 8. Deep Navy & Royal Blue Footer */}
       <Footer
         onScrollToForm={handleScrollToForm}
       />
 
-      {/* Deep-Dive Modals & Drawers */}
+      {/* Modals & Drawers */}
       <GeneratedNotesModal
         isOpen={isGenerateModalOpen}
         onClose={() => setIsGenerateModalOpen(false)}

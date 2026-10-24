@@ -10,8 +10,10 @@ import {
   Check,
   FileText,
   ExternalLink,
-  Code2
+  Code2,
+  Sparkles
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export interface ReleaseFormData {
   repoUrl: string;
@@ -110,20 +112,24 @@ Verification Engine: GitWise Dual-Pass AST Auditor
   };
 
   return (
-    <section id="generate-form" className="py-16 bg-surface-light border-b border-surface-border">
+    <section id="generate-form" className="py-20 bg-white border-b border-surface-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Workspace Card */}
-        <div className="bg-white rounded-xl border border-surface-border shadow-card p-6 sm:p-8">
+        {/* Workspace Card with Modern Shadow */}
+        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-card p-6 sm:p-10">
           
           {/* Header Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-5 border-b border-surface-border">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-100">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-navy-900 tracking-tight">
-                Generate release notes
+              <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary-600 mb-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Interactive Workspace</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-navy-950 tracking-tight font-sans">
+                Generate verified release notes
               </h2>
-              <p className="text-xs sm:text-sm text-surface-muted mt-1">
-                Select a GitHub repository and date range to extract merged PRs and run independent claim verification.
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                Select a GitHub repository and release window to extract merged PRs and run dual-pass verification.
               </p>
             </div>
 
@@ -140,9 +146,9 @@ Verification Engine: GitWise Dual-Pass AST Auditor
                     setReleaseType(preset.type);
                     setError(null);
                   }}
-                  className={`text-xs px-2.5 py-1 rounded-md border transition-colors ${
+                  className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all ${
                     repoUrl === preset.url 
-                      ? 'border-brand-orange bg-brand-orange-light text-brand-orange font-medium' 
+                      ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' 
                       : 'border-slate-200 hover:border-slate-300 text-slate-600 bg-slate-50'
                   }`}
                 >
@@ -154,23 +160,23 @@ Verification Engine: GitWise Dual-Pass AST Auditor
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-3 rounded-lg bg-verification-error-bg border border-verification-error-border text-verification-error text-xs sm:text-sm flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600" />
               <span>{error}</span>
             </div>
           )}
 
           {/* Form Fields */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
               
               {/* Field 1: GitHub URL (5 cols) */}
               <div className="md:col-span-5 space-y-1.5">
-                <label htmlFor="repoUrl" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <label htmlFor="repoUrl" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                   GitHub repository URL <span className="text-red-500">*</span>
                 </label>
                 <div className="relative rounded-lg shadow-subtle">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                     <Github className="w-4 h-4" />
                   </div>
                   <input
@@ -180,7 +186,7 @@ Verification Engine: GitWise Dual-Pass AST Auditor
                     disabled={isGenerating}
                     onChange={(e) => setRepoUrl(e.target.value)}
                     placeholder="https://github.com/facebook/react"
-                    className="block w-full pl-9 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition disabled:opacity-60"
+                    className="block w-full pl-10 pr-3 py-3 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition disabled:opacity-60 font-mono text-xs sm:text-sm"
                     required
                   />
                 </div>
@@ -188,7 +194,7 @@ Verification Engine: GitWise Dual-Pass AST Auditor
 
               {/* Field 2: Start Date (2 cols) */}
               <div className="md:col-span-2 space-y-1.5">
-                <label htmlFor="startDate" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <label htmlFor="startDate" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Start date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -197,14 +203,14 @@ Verification Engine: GitWise Dual-Pass AST Auditor
                   value={startDate}
                   disabled={isGenerating}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="block w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition disabled:opacity-60"
+                  className="block w-full px-3 py-3 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition disabled:opacity-60"
                   required
                 />
               </div>
 
               {/* Field 3: End Date (2 cols) */}
               <div className="md:col-span-2 space-y-1.5">
-                <label htmlFor="endDate" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <label htmlFor="endDate" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                   End date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -213,14 +219,14 @@ Verification Engine: GitWise Dual-Pass AST Auditor
                   value={endDate}
                   disabled={isGenerating}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="block w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition disabled:opacity-60"
+                  className="block w-full px-3 py-3 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition disabled:opacity-60"
                   required
                 />
               </div>
 
               {/* Field 4: Release Type (3 cols) */}
               <div className="md:col-span-3 space-y-1.5">
-                <label htmlFor="releaseType" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <label htmlFor="releaseType" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Release type
                 </label>
                 <div className="relative">
@@ -229,7 +235,7 @@ Verification Engine: GitWise Dual-Pass AST Auditor
                     value={releaseType}
                     disabled={isGenerating}
                     onChange={(e) => setReleaseType(e.target.value as any)}
-                    className="block w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition appearance-none cursor-pointer disabled:opacity-60"
+                    className="block w-full px-3.5 py-3 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition appearance-none cursor-pointer disabled:opacity-60"
                   >
                     <option value="Weekly">Weekly</option>
                     <option value="Minor Release">Minor Release</option>
@@ -243,21 +249,21 @@ Verification Engine: GitWise Dual-Pass AST Auditor
 
             </div>
 
-            {/* Submit Button Row */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
-              <div className="text-xs text-surface-muted flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
-                <span>Dual-pass verifier active • Illustrative demo mode enabled</span>
+            {/* Action Row */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-slate-100">
+              <div className="text-xs text-slate-500 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                <span>Deterministic mode active • 0 ungrounded claims policy</span>
               </div>
 
               <button
                 type="submit"
                 disabled={isGenerating}
-                className="bg-brand-orange hover:bg-brand-orange-hover text-white text-sm font-semibold px-6 py-2.5 rounded-lg shadow-sm transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold px-8 py-3 rounded-lg shadow-md shadow-primary-600/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed btn-shimmer"
               >
                 {isGenerating ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin text-white" />
                     <span>Analyzing Pull Requests & Verifying Diffs...</span>
                   </>
                 ) : (
@@ -270,35 +276,42 @@ Verification Engine: GitWise Dual-Pass AST Auditor
             </div>
           </form>
 
-          {/* Embedded Markdown Output View */}
-          {lastGenerated && !isGenerating && (
-            <div className="mt-8 pt-6 border-t border-surface-border space-y-4 animate-in fade-in duration-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <h3 className="text-sm font-bold text-navy-900">
-                    Generated Release Notes (Verified)
-                  </h3>
-                  <span className="text-[10px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded">
-                    4 Claims Citing Source Diffs
-                  </span>
+          {/* Embedded Verified Markdown Output View */}
+          <AnimatePresence>
+            {lastGenerated && !isGenerating && (
+              <motion.div 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="mt-8 pt-6 border-t border-slate-200 space-y-4"
+              >
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <h3 className="text-sm font-bold text-navy-950">
+                      Generated Release Notes (Verified)
+                    </h3>
+                    <span className="text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded">
+                      4 Claims Citing Source Diffs
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-primary-600 bg-slate-100 hover:bg-blue-50 px-3.5 py-1.5 rounded-lg border border-slate-200 transition-colors"
+                  >
+                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copied ? 'Copied' : 'Copy Markdown'}</span>
+                  </button>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleCopy}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-navy-900 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-md transition-colors"
-                >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copied ? 'Copied' : 'Copy Markdown'}</span>
-                </button>
-              </div>
-
-              <div className="bg-navy-900 rounded-lg p-4 font-mono text-xs text-slate-200 overflow-x-auto leading-relaxed border border-navy-800">
-                <pre>{sampleMarkdown}</pre>
-              </div>
-            </div>
-          )}
+                <div className="bg-navy-950 rounded-xl p-4 sm:p-5 font-mono text-xs text-slate-200 overflow-x-auto leading-relaxed border border-navy-800 shadow-inner">
+                  <pre>{sampleMarkdown}</pre>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
         </div>
 
