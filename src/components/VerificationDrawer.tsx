@@ -66,7 +66,7 @@ export const VerificationDrawer: React.FC<VerificationDrawerProps> = ({
             </div>
             <div>
               <h3 className="text-base font-bold text-white">
-                ReleaseGuard Verification Engine
+                GitWise Verification Engine
               </h3>
               <p className="text-xs text-slate-400">
                 5-Stage Dual-Pass Verification Architecture
@@ -90,7 +90,7 @@ export const VerificationDrawer: React.FC<VerificationDrawerProps> = ({
               Deterministic Evidence Principle
             </h4>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Standard LLMs suffer from confabulation when writing release notes, inventing features or quoting wrong PR numbers. ReleaseGuard treats PR diffs as ground truth and verifies every sentence before release notes can be approved.
+              Standard LLMs suffer from confabulation when writing release notes, inventing features or quoting wrong PR numbers. GitWise treats PR diffs as ground truth and verifies every sentence before release notes can be approved.
             </p>
           </div>
 

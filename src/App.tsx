@@ -3,9 +3,8 @@ import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { ReleaseForm, ReleaseFormData } from './components/ReleaseForm';
 import { CoreCapabilities } from './components/CoreCapabilities';
-import { TrustWorkflow } from './components/TrustWorkflow';
-import { TrustCards } from './components/TrustCards';
-import { EvaluationBanner } from './components/EvaluationBanner';
+import { VerificationSection } from './components/VerificationSection';
+import { EvaluationSection } from './components/EvaluationSection';
 import { Footer } from './components/Footer';
 import { GeneratedNotesModal } from './components/GeneratedNotesModal';
 import { EvaluationLabModal } from './components/EvaluationLabModal';
@@ -23,11 +22,29 @@ export const App: React.FC = () => {
     releaseType: 'Weekly',
   });
 
+  const handleScrollToForm = () => {
+    const el = document.getElementById('generate-form');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+      const input = document.getElementById('repoUrl');
+      if (input) {
+        setTimeout(() => input.focus(), 400);
+      }
+    }
+  };
+
+  const handleExploreVerification = () => {
+    const el = document.getElementById('verification');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const handleGenerate = (data: ReleaseFormData) => {
     setIsGenerating(true);
     setGeneratedData(data);
     
-    // Simulate generation & verification processing
+    // Simulate generation and diff token verification
     setTimeout(() => {
       setIsGenerating(false);
       setIsGenerateModalOpen(true);
@@ -36,65 +53,57 @@ export const App: React.FC = () => {
 
   const handleSelectCapability = (id: string) => {
     if (id === 'evaluation-lab') {
-      setIsEvaluationModalOpen(true);
+      const el = document.getElementById('evaluation');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      else setIsEvaluationModalOpen(true);
     } else if (id === 'independent-verification' || id === 'coverage-analysis') {
-      setIsVerificationDrawerOpen(true);
-    } else {
-      setIsGenerateModalOpen(true);
+      const el = document.getElementById('verification');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      else setIsVerificationDrawerOpen(true);
+    } else if (id === 'github-research' || id === 'ai-drafting') {
+      handleScrollToForm();
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-surface-light text-surface-text selection:bg-brand-orange selection:text-white">
-      {/* 1. Header with announcement bar & white navbar */}
+      {/* 1. Compact Header */}
       <Header
-        onOpenGenerateModal={() => setIsGenerateModalOpen(true)}
+        onScrollToForm={handleScrollToForm}
         onOpenEvaluationModal={() => setIsEvaluationModalOpen(true)}
-        onOpenVerificationDrawer={() => setIsVerificationDrawerOpen(true)}
       />
 
-      {/* Main Content Layout matching Reference Screenshot */}
       <main className="flex-grow">
-        {/* 2. Hero Section with Cinematic Dark Backdrop, Trust Indicators & Floating White Card */}
+        {/* 2. Simplified Hero (2-column layout with unified preview panel) */}
         <Hero
-          onOpenGenerateModal={() => setIsGenerateModalOpen(true)}
-          onOpenVerificationDrawer={() => setIsVerificationDrawerOpen(true)}
+          onScrollToForm={handleScrollToForm}
+          onExploreVerification={handleExploreVerification}
         />
 
-        {/* 3. Overlapping White Generation Form */}
+        {/* 3. Release Generation Form (Workspace panel, validation, presets) */}
         <ReleaseForm
           onGenerate={handleGenerate}
           isGenerating={isGenerating}
         />
 
-        {/* 4. Core Capabilities — 5 Horizontal Cards */}
+        {/* 4. Core Capabilities (5 clean cards, CSS mini diagrams, no stock imagery) */}
         <CoreCapabilities
           onSelectCapability={handleSelectCapability}
         />
 
-        {/* 5. Trust and Workflow — Split Section (Dark Left, Feature Grid Right) */}
-        <TrustWorkflow
-          onExploreWorkflow={() => setIsVerificationDrawerOpen(true)}
-        />
+        {/* 5. Verification: The Core Differentiator (Interactive evidence inspection) */}
+        <VerificationSection />
 
-        {/* 6. Product Trust Cards (Replaces Testimonials with Genuine Guarantees) */}
-        <TrustCards />
-
-        {/* 7. Dark Call-to-Action Banner */}
-        <EvaluationBanner
-          onOpenEvaluationLab={() => setIsEvaluationModalOpen(true)}
-          onOpenRunHistory={() => setIsEvaluationModalOpen(true)}
-        />
+        {/* 6. Evaluation Lab (Dedicated major feature section, test categories, comparison) */}
+        <EvaluationSection />
       </main>
 
-      {/* 8. Deep Navy Footer */}
+      {/* 7. Clean GitWise Footer */}
       <Footer
-        onOpenGenerateModal={() => setIsGenerateModalOpen(true)}
-        onOpenEvaluationModal={() => setIsEvaluationModalOpen(true)}
-        onOpenVerificationDrawer={() => setIsVerificationDrawerOpen(true)}
+        onScrollToForm={handleScrollToForm}
       />
 
-      {/* Interactive Modals & Drawers */}
+      {/* Deep-Dive Modals & Drawers */}
       <GeneratedNotesModal
         isOpen={isGenerateModalOpen}
         onClose={() => setIsGenerateModalOpen(false)}
@@ -109,7 +118,7 @@ export const App: React.FC = () => {
       <VerificationDrawer
         isOpen={isVerificationDrawerOpen}
         onClose={() => setIsVerificationDrawerOpen(false)}
-        onOpenGenerateModal={() => setIsGenerateModalOpen(true)}
+        onOpenGenerateModal={handleScrollToForm}
       />
     </div>
   );

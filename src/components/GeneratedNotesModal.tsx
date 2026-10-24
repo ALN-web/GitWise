@@ -30,7 +30,7 @@ export const GeneratedNotesModal: React.FC<GeneratedNotesModalProps> = ({
 
   const markdownContent = `# Release Notes — ${repoName} (${releaseType})
 Window: ${dateRange}
-Verification Engine: ReleaseGuard v2.4 (Dual-Pass Deterministic)
+Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
 
 ### 🚀 Highlights & Features
 - **Server Actions Streaming Transitions**: Enabled native streaming transitions with fine-grained suspense boundaries ([#1422](https://github.com/${repoName}/pull/1422))
@@ -44,7 +44,7 @@ Verification Engine: ReleaseGuard v2.4 (Dual-Pass Deterministic)
 - **Concurrent Root Priority Inversion**: Corrected lane assignment for sync updates scheduled during discrete events ([#1412](https://github.com/${repoName}/pull/1412))
   - *Evidence diff*: \`packages/react-reconciler/src/ReactFiberWorkLoop.js:671\`
 
-### 🛡️ ReleaseGuard Audit Summary
+### 🛡️ GitWise Audit Summary
 - Merged PRs analyzed: 28
 - Grounded claims: 100% (4 of 4 assertions traceable to git diffs)
 - Hallucinated references: 0 detected
@@ -179,7 +179,7 @@ Verification Engine: ReleaseGuard v2.4 (Dual-Pass Deterministic)
           </div>
 
           <span className="text-[11px] text-slate-400 font-mono hidden sm:inline">
-            Deterministic Run #RG-8831
+            Deterministic Run #GW-8831
           </span>
         </div>
 
@@ -200,7 +200,7 @@ Verification Engine: ReleaseGuard v2.4 (Dual-Pass Deterministic)
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 mt-1">
-                  Validated against 28 merged PRs using ReleaseGuard ground-truth diff engine.
+                  Validated against 28 merged PRs using GitWise ground-truth diff engine.
                 </p>
               </div>
 

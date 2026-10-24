@@ -2,191 +2,143 @@ import React from 'react';
 import { 
   GitBranch, 
   Github, 
-  Lock
+  ArrowRight
 } from 'lucide-react';
 
 interface FooterProps {
-  onOpenGenerateModal: () => void;
-  onOpenEvaluationModal: () => void;
-  onOpenVerificationDrawer: () => void;
+  onScrollToForm: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({
-  onOpenGenerateModal,
-  onOpenEvaluationModal,
-  onOpenVerificationDrawer,
-}) => {
+export const Footer: React.FC<FooterProps> = ({ onScrollToForm }) => {
   return (
-    <footer className="bg-navy-950 text-slate-300 border-t border-navy-900 pt-16 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="bg-navy-950 text-slate-400 border-t border-navy-900 py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Main Footer Links Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-navy-800">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-10 border-b border-navy-900">
           
-          {/* Col 1: Logo & Mission Description */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-navy-900 border border-slate-700 flex items-center justify-center text-brand-orange shadow-sm">
-                <GitBranch className="w-5 h-5" />
+          {/* Brand Col (5 cols) */}
+          <div className="md:col-span-5 space-y-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-navy-900 border border-slate-800 flex items-center justify-center text-brand-orange">
+                <GitBranch className="w-4 h-4" />
               </div>
-              <div>
-                <span className="text-xl font-extrabold tracking-tight text-white">
-                  Git<span className="text-brand-orange">Wise</span>
-                </span>
-                <span className="block text-[10px] uppercase font-mono tracking-widest text-slate-400">
-                  ReleaseGuard Verification Engine
-                </span>
-              </div>
+              <span className="text-lg font-bold tracking-tight text-white">
+                Git<span className="text-brand-orange">Wise</span>
+              </span>
             </div>
 
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
-              An AI-powered release-note generation and verification system that converts GitHub pull requests into accurate, traceable weekly release notes.
+              AI-Powered Release Intelligence that converts GitHub pull requests into accurate, traceable weekly release notes.
             </p>
 
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center gap-3 pt-1">
               <a
-                href="https://github.com"
+                href="https://github.com/ALN-web/GitWise"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-lg bg-navy-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-brand-orange transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
                 aria-label="GitHub Repository"
               >
                 <Github className="w-4 h-4" />
+                <span>GitHub Repository</span>
               </a>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-navy-900 border border-slate-800 text-[11px] font-mono text-slate-300">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span>Deterministic Mode</span>
-              </div>
             </div>
           </div>
 
-          {/* Col 2: Product */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+          {/* Product Col (2 cols) */}
+          <div className="md:col-span-2 space-y-2.5">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">
               Product
             </h4>
-            <ul className="space-y-2 text-xs sm:text-sm">
+            <ul className="space-y-2 text-xs">
               <li>
-                <a href="#overview" className="hover:text-brand-orange transition-colors">
+                <a href="#overview" className="hover:text-white transition-colors">
                   Overview
                 </a>
               </li>
               <li>
                 <button
                   type="button"
-                  onClick={onOpenGenerateModal}
-                  className="hover:text-brand-orange transition-colors text-left"
+                  onClick={onScrollToForm}
+                  className="hover:text-white transition-colors text-left"
                 >
                   Generate Notes
                 </button>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={onOpenVerificationDrawer}
-                  className="hover:text-brand-orange transition-colors text-left"
-                >
-                  Verification
-                </button>
+                <a href="#verification" className="hover:text-white transition-colors">
+                  Verification Engine
+                </a>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={onOpenEvaluationModal}
-                  className="hover:text-brand-orange transition-colors text-left"
-                >
+                <a href="#evaluation" className="hover:text-white transition-colors">
                   Evaluation Lab
-                </button>
+                </a>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Resources */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white">
-              Resources
+          {/* Documentation Col (2 cols) */}
+          <div className="md:col-span-2 space-y-2.5">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">
+              Documentation
             </h4>
-            <ul className="space-y-2 text-xs sm:text-sm">
+            <ul className="space-y-2 text-xs">
               <li>
-                <a href="#documentation" className="hover:text-brand-orange transition-colors">
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a href="#how-it-works" className="hover:text-brand-orange transition-colors">
+                <a href="#capabilities" className="hover:text-white transition-colors">
                   How It Works
                 </a>
               </li>
               <li>
-                <a href="#overview" className="hover:text-brand-orange transition-colors">
+                <a href="#verification" className="hover:text-white transition-colors">
+                  Evidence Traceability
+                </a>
+              </li>
+              <li>
+                <a href="#generate-form" className="hover:text-white transition-colors">
                   GitHub Integration
                 </a>
               </li>
               <li>
-                <a href="#verification" className="hover:text-brand-orange transition-colors">
-                  Diff Token Auditing
+                <a href="#evaluation" className="hover:text-white transition-colors">
+                  Adversarial Testing
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Col 4: Project & Status */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+          {/* Project Col (3 cols) */}
+          <div className="md:col-span-3 space-y-2.5">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">
               Project
             </h4>
-            <ul className="space-y-2 text-xs sm:text-sm">
+            <ul className="space-y-2 text-xs">
               <li>
-                <a href="#how-it-works" className="hover:text-brand-orange transition-colors">
-                  Architecture
-                </a>
+                <span className="text-slate-300 font-medium">Release Intelligence v2.0</span>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={onOpenEvaluationModal}
-                  className="hover:text-brand-orange transition-colors text-left"
-                >
-                  Testing & Benchmarks
-                </button>
+                <span className="text-slate-400">Strict Source Grounding Engine</span>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={onOpenEvaluationModal}
-                  className="hover:text-brand-orange transition-colors text-left"
-                >
-                  Run History
-                </button>
+                <span className="text-slate-400">AST Diff Token Parser</span>
               </li>
               <li>
-                <span className="inline-flex items-center gap-1 text-slate-500 text-xs">
-                  <Lock className="w-3 h-3 text-brand-orange" />
-                  <span>Bounded Retry Loop</span>
-                </span>
+                <span className="text-slate-400">Deterministic Convergence (Max 3 Loops)</span>
               </li>
             </ul>
           </div>
 
         </div>
 
-        {/* Bottom Row */}
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-slate-300">
-              ReleaseGuard — Verified Weekly Release Notes
-            </span>
+        {/* Bottom Bar */}
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+          <div>
+            © 2026 GitWise. Ship smarter. Verify every change.
           </div>
 
-          <div className="flex items-center gap-6">
-            <a href="#privacy" className="hover:text-white transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#terms" className="hover:text-white transition-colors">
-              Terms of Verification
-            </a>
-            <a href="#security" className="hover:text-white transition-colors">
-              Source Grounding Guarantee
+          <div className="flex items-center gap-4">
+            <a href="#overview" className="hover:text-slate-300 transition-colors">
+              Back to top ↑
             </a>
           </div>
         </div>

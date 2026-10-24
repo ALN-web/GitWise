@@ -34,7 +34,7 @@ export const EvaluationLabModal: React.FC<EvaluationLabModalProps> = ({
       title: 'Adversarial Test 01: Fabricated Reference Injection',
       scenario: 'An untrusted AI draft proposes a claim referencing PR #9841 ("Rewrote bundler in Rust for 20x speedup"). However, no PR #9841 exists in the git commit log.',
       unverifiedDraft: '- Rewrote asset pipeline in Rust for 20x speedup ([#9841](https://github.com/repo/pull/9841))',
-      actionTaken: 'ReleaseGuard Verification Layer queried git log and AST tree. 0 commits matched ID #9841. Assertion flagged as ungrounded.',
+      actionTaken: 'GitWise Verification Layer queried git log and AST tree. 0 commits matched ID #9841. Assertion flagged as ungrounded.',
       verifiedResult: 'REJECTED: Reference #9841 not found in git diffs. Removed from release notes draft.',
       status: 'REJECTED_UNGROUNDED',
     },
@@ -73,7 +73,7 @@ export const EvaluationLabModal: React.FC<EvaluationLabModalProps> = ({
             </div>
             <div>
               <h3 className="text-base font-bold text-white tracking-tight">
-                ReleaseGuard Evaluation Lab
+                GitWise Evaluation Lab
               </h3>
               <p className="text-xs text-slate-400">
                 Stress testing verification accuracy with controlled error injection
@@ -160,12 +160,12 @@ export const EvaluationLabModal: React.FC<EvaluationLabModalProps> = ({
               </p>
             </div>
 
-            {/* ReleaseGuard Verification Action */}
+            {/* GitWise Verification Action */}
             <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-1.5">
                   <ShieldAlert className="w-3.5 h-3.5 text-emerald-600" />
-                  ReleaseGuard Assertion Check
+                  GitWise Assertion Check
                 </span>
                 <span className="text-[10px] font-mono bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">
                   Dual-Pass Auditor
@@ -183,7 +183,7 @@ export const EvaluationLabModal: React.FC<EvaluationLabModalProps> = ({
 
           {/* Verification Engine Log Preview */}
           <div className="bg-navy-950 text-slate-300 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-1">
-            <div className="text-slate-500">// Execution trace: ReleaseGuard Evaluator</div>
+            <div className="text-slate-500">// Execution trace: GitWise Evaluator</div>
             <div className="text-slate-400">INPUT_VEC: evaluate_candidate_node(claim_hash: 0x9f182)</div>
             <div className="text-yellow-300">SEARCH: match_git_tree(refs: ["#9841", "#1415", "#1435"])</div>
             <div className="text-emerald-400">CONVERGENCE_STATUS: DETERMINISTIC_AUDIT_PASSED</div>

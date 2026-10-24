@@ -40,8 +40,8 @@ export const TrustWorkflow: React.FC<TrustWorkflowProps> = ({ onExploreWorkflow 
   ];
 
   return (
-    <section id="verification" className="py-20 bg-white border-t border-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="workflow" className="py-20 bg-white border-t border-slate-100">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Split Section Container */}
         <div className="rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm bg-white grid grid-cols-1 lg:grid-cols-12">
@@ -49,23 +49,13 @@ export const TrustWorkflow: React.FC<TrustWorkflowProps> = ({ onExploreWorkflow 
           {/* Left Dark Image Panel (5 cols) */}
           <div className="lg:col-span-5 bg-navy-900 text-white p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden">
             
-            {/* Background Engineering Environment Image */}
-            <div className="absolute inset-0 z-0">
-              <img
-                src="https://images.unsplash.com/photo-1556075798-4825dfaaf498?auto=format&fit=crop&w=800&q=80"
-                alt="Git graph and terminal workflow"
-                className="w-full h-full object-cover object-center opacity-20 mix-blend-luminosity filter contrast-125"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-900/90 to-navy-900/95" />
-            </div>
-
             {/* Glowing Accent */}
             <div className="absolute -top-24 -left-24 w-64 h-64 bg-brand-orange/15 rounded-full blur-3xl pointer-events-none" />
 
             {/* Content Top */}
             <div className="relative z-10">
               <span className="text-xs font-bold tracking-widest text-brand-orange uppercase block mb-3">
-                WHY RELEASEGUARD?
+                WHY GITWISE?
               </span>
 
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight mb-5">
@@ -74,7 +64,7 @@ export const TrustWorkflow: React.FC<TrustWorkflowProps> = ({ onExploreWorkflow 
               </h2>
 
               <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-8">
-                Generation alone is not enough. ReleaseGuard checks the draft against source evidence and exposes the findings before release notes are published.
+                Generation alone is not enough. GitWise checks the draft against source evidence and exposes the findings before release notes are published.
               </p>
 
               <div>
@@ -97,7 +87,7 @@ export const TrustWorkflow: React.FC<TrustWorkflowProps> = ({ onExploreWorkflow 
                   <span className="text-slate-400">Verifier Status:</span>
                   <span className="text-white font-medium">Strict Traceability Mode</span>
                 </div>
-                <span className="text-brand-orange font-bold text-[11px]">v2.4</span>
+                <span className="text-brand-orange font-bold text-[11px]">v2.0</span>
               </div>
             </div>
 
@@ -113,7 +103,7 @@ export const TrustWorkflow: React.FC<TrustWorkflowProps> = ({ onExploreWorkflow 
                     key={feature.title}
                     className="p-6 rounded-xl border border-slate-100 bg-surface-light/60 hover:bg-white hover:border-slate-200 hover:shadow-md transition-all duration-200 group"
                   >
-                    {/* Orange Outline Icon Badge matching reference */}
+                    {/* Orange Outline Icon Badge */}
                     <div className="w-12 h-12 rounded-xl border-2 border-brand-orange/40 bg-brand-orange-light flex items-center justify-center text-brand-orange mb-5 group-hover:border-brand-orange group-hover:scale-105 transition-all shadow-sm">
                       <Icon className="w-6 h-6 stroke-[1.8]" />
                     </div>

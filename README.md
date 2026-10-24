@@ -1,60 +1,51 @@
-# GitWise — Verified Weekly Release Notes
+# GitWise — AI-Powered Release Intelligence
 
-An AI-powered release-note generation and verification platform that converts GitHub pull requests into accurate, traceable weekly release notes. Built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**.
+**Ship smarter. Verify every change.**
+
+An AI-powered release intelligence platform that converts merged GitHub pull requests into accurate, traceable weekly release notes, independently verifies claims against source diffs, identifies missing changes, and validates facts using controlled adversarial test suites.
+
+Built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**.
 
 ---
 
 ## 🎨 Visual Identity & Architecture
 
-Recreated in high fidelity from the enterprise reference design with a tailored Developer SaaS aesthetic:
+Crafted as a premium engineering SaaS interface inspired by Linear and Vercel:
 
-- **Deep Navy Palette**: `#07172B` (primary dark), `#10263D` (secondary dark)
-- **Vivid Accent Orange**: `#F36B16` (buttons, badges, active tabs, icon badges)
-- **Clean Light Surfaces**: `#F7F8FA` (body background), `#FFFFFF` (cards & panels), `#E7EAF0` (subtle borders)
-- **Typography**: Inter (modern sans-serif) + JetBrains Mono (code hunks & commit hashes)
+- **Deep Navy Palette**: `#0B1220` (primary dark), `#111C2E` (dark surface)
+- **Vivid Accent Orange**: `#F97316` (buttons, badges, active tabs, icon badges)
+- **Clean Light Surfaces**: `#F7F8FA` (body background), `#FFFFFF` (cards & panels), `#E5E7EB` (subtle borders)
+- **Typography**: Inter (modern sans-serif) + JetBrains Mono (diff hunks & commit hashes)
 
 ---
 
-## 🚀 Sections Replicated
+## 🚀 Key Sections
 
-1. **Top Announcement Bar**: GitHub tracking, independent verification, traceable source evidence, and release reliability status.
-2. **Main Navigation**: Sticky header with GitWise/ReleaseGuard branding, active indicator tab, search trigger, and primary CTA.
-3. **Cinematic Hero**:
-   - Eyebrow: *AI-POWERED RELEASE ENGINEERING*
-   - Main Heading: *Ship with confidence.* (orange highlighted)
-   - 4 Compact Trust Indicators: GitHub-powered, Source-linked claims, Independent verification, Bounded retries.
-   - Floating Information Card: *Release Verification* with live status pills (Verified, Checked, Flagged, Ready).
-4. **Overlapping Generation Form**:
-   - Overlaps hero with deep soft shadow.
-   - Inputs: GitHub repository URL, Start date, End date, Release type dropdown.
-   - Quick demo presets for 1-click test runs (`facebook/react`, `vercel/next.js`, `tailwindlabs/tailwindcss`).
-5. **Core Capabilities (5-Card Grid)**:
+1. **Streamlined Header**: Compact height, low-key announcement bar, clean GitWise wordmark, and primary CTA.
+2. **Unified Hero Composition**:
+   - Eyebrow: *AI-POWERED RELEASE INTELLIGENCE*
+   - Headline: *Release notes you can trust.* (orange highlighted)
+   - 3 Value Propositions: GitHub-integrated, Evidence-linked, Independently verified.
+   - Unified Product Preview: Demonstrates verified release notes, diff citations, and claim audit summary.
+3. **Workspace Release Form**:
+   - GitHub repository URL with owner/repo validation.
+   - Date range selector & release type dropdown.
+   - Quick presets for instant testing (`facebook/react`, `vercel/next.js`, `tailwindlabs/tailwindcss`).
+   - Embedded verified Markdown output view.
+4. **Core Capabilities (5 Clean Cards)**:
    - 1. GitHub Research
    - 2. AI Drafting
    - 3. Independent Verification
    - 4. Coverage Analysis
    - 5. Evaluation Lab
-   - Each card features image header, overlapping orange icon badge, description, and action link.
-6. **Trust and Workflow (Split Section)**:
-   - Left dark navy panel (*WHY RELEASEGUARD? AI-generated. Independently verified.*)
-   - Right 2x2 feature grid (*Evidence Traceability, Coverage Checks, Independent Review, Transparent Results*).
-7. **Product Trust Cards**:
-   - Replaces testimonials with 3 genuine technical specifications:
-     - *Grounded in Evidence* (AST Diff Extractor)
-     - *Tested Against Errors* (Adversarial Benchmarks)
-     - *Designed for Inspection* (Deterministic Audit Log)
-8. **Evaluation Call-to-Action Banner**:
-   - Dark promotional banner (*Don't just generate. Verify.*) with quick repository tester and Evaluation Lab trigger.
-9. **Deep Navy Footer**:
-   - Product, Resources, and Project navigation columns, system status indicator, and copyright footer.
-
----
-
-## 🛠️ Interactive Features Included
-
-- **Generated Release Notes Modal**: Interactive preview of verified release notes with diff hunk citations, copy markdown button, and 4-point verification audit log.
-- **Evaluation Lab Modal**: Test 3 adversarial scenarios: Fabricated PR injection, Omitted security PR, and Hyperbolic claim correction.
-- **Verification Drawer**: Full technical breakdown of the 5-stage verification pipeline.
+   - Purposeful CSS workflow diagrams without decorative stock photos.
+5. **Verification: The Core Differentiator**:
+   - Interactive evidence inspector showing 4 audited claim states (Verified, Unsupported, Missing PR, Invalid Ref).
+   - Real ground-truth git diff evidence inspection.
+6. **Evaluation Lab & Benchmarking**:
+   - Dedicated feature testing against adversarial test vectors (Fabricated PR, Omitted PR, Hyperbole).
+   - Baseline unverified LLM vs GitWise verified output comparison.
+7. **Clean Footer**: Minimal, developer-centric footer with product navigation and repository links.
 
 ---
 
