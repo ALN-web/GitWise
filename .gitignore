@@ -26,3 +26,12 @@ dist-ssr
 # Binaries
 cloudflared.exe
 *.tsbuildinfo
+
+# Python & Persistence
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.db
+.env
+
