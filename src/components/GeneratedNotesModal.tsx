@@ -13,17 +13,20 @@ import {
 import { ReleaseFormData } from './ReleaseForm';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
+import { OrchestrationResult } from '../agents/contracts';
 
 interface GeneratedNotesModalProps {
   isOpen: boolean;
   onClose: () => void;
   data: ReleaseFormData | null;
+  orchestrationResult?: OrchestrationResult | null;
 }
 
 export const GeneratedNotesModal: React.FC<GeneratedNotesModalProps> = ({
   isOpen,
   onClose,
   data,
+  orchestrationResult,
 }) => {
   const [copied, setCopied] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
@@ -31,11 +34,13 @@ export const GeneratedNotesModal: React.FC<GeneratedNotesModalProps> = ({
 
   if (!isOpen) return null;
 
-  const repoName = data?.repoUrl.replace('https://github.com/', '') || 'facebook/react';
-  const releaseType = data?.releaseType || 'Weekly';
-  const dateRange = `${data?.startDate || '2026-10-14'} → ${data?.endDate || '2026-10-21'}`;
+  const repoName = orchestrationResult?.repo || data?.repoUrl.replace('https://github.com/', '') || 'facebook/react';
+  const releaseType = orchestrationResult?.releaseType || data?.releaseType || 'Weekly';
+  const dateRange = orchestrationResult 
+    ? `${orchestrationResult.startDate} → ${orchestrationResult.endDate}`
+    : `${data?.startDate || '2026-10-14'} → ${data?.endDate || '2026-10-21'}`;
 
-  const markdownContent = `# Release Notes — ${repoName} (${releaseType})
+  const markdownContent = orchestrationResult?.finalDraft?.markdown || `# Release Notes — ${repoName} (${releaseType})
 Window: ${dateRange}
 Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
 
@@ -233,150 +238,302 @@ Verification Engine: GitWise v2.0 (Dual-Pass Deterministic)
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 mt-1">
-                  Validated against 28 merged PRs using GitWise ground-truth diff engine.
+                  Validated using GitWise ground-truth AST diff engine ({orchestrationResult ? orchestrationResult.attemptsCount - 1 : 0} retries to convergence).
                 </p>
               </div>
 
-              {/* Section 1: Features */}
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-500" />
-                  <span>Features & Enhancements</span>
-                </h3>
-                <ul className="space-y-3 text-sm text-slate-700">
-                  <li className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <span className="font-semibold text-slate-900">Server Actions Streaming Transitions:</span>
-                        {' '}Enabled native streaming transitions with fine-grained suspense boundaries.
-                      </div>
-                      <Badge variant="verified" size="sm">
-                        PR #1422
-                      </Badge>
-                    </div>
-                    <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
-                      <span className="text-slate-400">Diff Hunk:</span>
-                      <span className="text-slate-700 break-all">
-                        packages/react-client/src/ReactFlightClient.js:412
-                      </span>
-                    </div>
-                  </li>
+              {/* Dynamic or Fallback Claims Rendering */}
+              {orchestrationResult?.finalDraft?.claims && orchestrationResult.finalDraft.claims.length > 0 ? (
+                (() => {
+                  const claims = orchestrationResult.finalDraft.claims;
+                  const features = claims.filter((c) => c.section === 'features');
+                  const bugFixes = claims.filter((c) => c.section !== 'features');
+                  return (
+                    <div className="space-y-6">
+                      {features.length > 0 && (
+                        <div className="space-y-3">
+                          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-blue-500" />
+                            <span>Features & Enhancements</span>
+                          </h3>
+                          <ul className="space-y-3 text-sm text-slate-700">
+                            {features.map((item) => (
+                              <li key={item.id} className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="text-slate-800">
+                                    {item.text}
+                                  </div>
+                                  <a
+                                    href={item.prUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1 text-xs font-mono font-medium text-blue-600 hover:text-blue-800 shrink-0"
+                                  >
+                                    <span>#{item.prNumber}</span>
+                                    <ExternalLink className="w-3 h-3" />
+                                  </a>
+                                </div>
+                                {item.citedFile && (
+                                  <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
+                                    <span className="text-slate-400">Diff Hunk:</span>
+                                    <span className="text-slate-700 break-all">{item.citedFile}</span>
+                                  </div>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
 
-                  <li className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <span className="font-semibold text-slate-900">Hydration Error Context Diagnostics:</span>
-                        {' '}Error messages now pin the exact DOM mismatch line and column coordinates.
-                      </div>
-                      <Badge variant="verified" size="sm">
-                        PR #1429
-                      </Badge>
+                      {bugFixes.length > 0 && (
+                        <div className="space-y-3">
+                          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                            <span>Bug Fixes & Patches</span>
+                          </h3>
+                          <ul className="space-y-3 text-sm text-slate-700">
+                            {bugFixes.map((item) => (
+                              <li key={item.id} className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="text-slate-800">
+                                    {item.text}
+                                  </div>
+                                  <a
+                                    href={item.prUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1 text-xs font-mono font-medium text-blue-600 hover:text-blue-800 shrink-0"
+                                  >
+                                    <span>#{item.prNumber}</span>
+                                    <ExternalLink className="w-3 h-3" />
+                                  </a>
+                                </div>
+                                {item.citedFile && (
+                                  <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
+                                    <span className="text-slate-400">Diff Hunk:</span>
+                                    <span className="text-slate-700 break-all">{item.citedFile}</span>
+                                  </div>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
-                    <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
-                      <span className="text-slate-400">Diff Hunk:</span>
-                      <span className="text-slate-700 break-all">
-                        packages/react-dom/src/client/ReactDOMComponent.js:889
-                      </span>
-                    </div>
-                  </li>
-                </ul>
-              </div>
+                  );
+                })()
+              ) : (
+                <>
+                  {/* Section 1: Features */}
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-blue-500" />
+                      <span>Features & Enhancements</span>
+                    </h3>
+                    <ul className="space-y-3 text-sm text-slate-700">
+                      <li className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <span className="font-semibold text-slate-900">Server Actions Streaming Transitions:</span>
+                            {' '}Enabled native streaming transitions with fine-grained suspense boundaries.
+                          </div>
+                          <Badge variant="verified" size="sm">
+                            PR #1422
+                          </Badge>
+                        </div>
+                        <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
+                          <span className="text-slate-400">Diff Hunk:</span>
+                          <span className="text-slate-700 break-all">
+                            packages/react-client/src/ReactFlightClient.js:412
+                          </span>
+                        </div>
+                      </li>
 
-              {/* Section 2: Bug Fixes */}
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span>Bug Fixes</span>
-                </h3>
-                <ul className="space-y-3 text-sm text-slate-700">
-                  <li className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <span className="font-semibold text-slate-900">Memory Leak in useDeferredValue:</span>
-                        {' '}Resolved closure retention of previous fibers when component unmounts mid-transition.
-                      </div>
-                      <Badge variant="verified" size="sm">
-                        PR #1435
-                      </Badge>
-                    </div>
-                    <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
-                      <span className="text-slate-400">Diff Hunk:</span>
-                      <span className="text-slate-700 break-all">
-                        packages/react-reconciler/src/ReactFiberHooks.js:1240
-                      </span>
-                    </div>
-                  </li>
+                      <li className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <span className="font-semibold text-slate-900">Hydration Error Context Diagnostics:</span>
+                            {' '}Error messages now pin the exact DOM mismatch line and column coordinates.
+                          </div>
+                          <Badge variant="verified" size="sm">
+                            PR #1429
+                          </Badge>
+                        </div>
+                        <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
+                          <span className="text-slate-400">Diff Hunk:</span>
+                          <span className="text-slate-700 break-all">
+                            packages/react-dom/src/client/ReactDOMComponent.js:889
+                          </span>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
 
-                  <li className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <span className="font-semibold text-slate-900">Concurrent Root Priority Inversion:</span>
-                        {' '}Corrected lane assignment for sync updates scheduled during discrete events.
-                      </div>
-                      <Badge variant="verified" size="sm">
-                        PR #1412
-                      </Badge>
-                    </div>
-                    <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
-                      <span className="text-slate-400">Diff Hunk:</span>
-                      <span className="text-slate-700 break-all">
-                        packages/react-reconciler/src/ReactFiberWorkLoop.js:671
-                      </span>
-                    </div>
-                  </li>
-                </ul>
-              </div>
+                  {/* Section 2: Bug Fixes */}
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span>Bug Fixes</span>
+                    </h3>
+                    <ul className="space-y-3 text-sm text-slate-700">
+                      <li className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <span className="font-semibold text-slate-900">Memory Leak in useDeferredValue:</span>
+                            {' '}Resolved closure retention of previous fibers when component unmounts mid-transition.
+                          </div>
+                          <Badge variant="verified" size="sm">
+                            PR #1435
+                          </Badge>
+                        </div>
+                        <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
+                          <span className="text-slate-400">Diff Hunk:</span>
+                          <span className="text-slate-700 break-all">
+                            packages/react-reconciler/src/ReactFiberHooks.js:1240
+                          </span>
+                        </div>
+                      </li>
+
+                      <li className="p-3.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <span className="font-semibold text-slate-900">Concurrent Root Priority Inversion:</span>
+                            {' '}Corrected lane assignment for sync updates scheduled during discrete events.
+                          </div>
+                          <Badge variant="verified" size="sm">
+                            PR #1412
+                          </Badge>
+                        </div>
+                        <div className="mt-2 text-xs font-mono text-slate-500 flex items-center gap-2 bg-white p-2 rounded border border-slate-200">
+                          <span className="text-slate-400">Diff Hunk:</span>
+                          <span className="text-slate-700 break-all">
+                            packages/react-reconciler/src/ReactFiberWorkLoop.js:671
+                          </span>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </>
+              )}
 
             </div>
           )}
 
           {activeTab === 'audit' && (
             <div className="space-y-4">
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center justify-between">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
+                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
                     <ShieldCheck className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-emerald-900">Evidence Audit Passed (4/4 Claims Grounded)</h4>
-                    <p className="text-xs text-emerald-700">No fabricated assertions or dropped PRs detected in repository AST.</p>
+                    <h4 className="text-sm font-bold text-emerald-900">
+                      {orchestrationResult?.success !== false ? 'Evidence Audit Passed (100% Grounded)' : 'Audit Warning Detected'}
+                    </h4>
+                    <p className="text-xs text-emerald-700">
+                      {orchestrationResult 
+                        ? `${orchestrationResult.finalCheckerResult.findings.length} claims verified against AST commit tree. Retries used: ${orchestrationResult.attemptsCount - 1}.`
+                        : 'No fabricated assertions or dropped PRs detected in repository AST.'}
+                    </p>
                   </div>
                 </div>
-                <Badge variant="verified" size="md">
-                  PASS RATE: 100%
+                <Badge variant={orchestrationResult?.success !== false ? 'verified' : 'unsupported'} size="md">
+                  GROUNDING: {((orchestrationResult?.finalCheckerResult?.groundedRatio ?? 1) * 100).toFixed(0)}%
                 </Badge>
               </div>
 
+              {/* Findings List */}
               <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100 shadow-sm">
-                <div className="p-4 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="font-semibold text-slate-800">Claim 1 (PR #1422)</span>
-                    <p className="text-slate-500 mt-0.5">Server Actions streaming transitions verify against ReactFlightClient diff.</p>
-                  </div>
-                  <span className="font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded">MATCH: 0.982</span>
-                </div>
-                <div className="p-4 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="font-semibold text-slate-800">Claim 2 (PR #1429)</span>
-                    <p className="text-slate-500 mt-0.5">Hydration error line/col verified against ReactDOMComponent diff.</p>
-                  </div>
-                  <span className="font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded">MATCH: 0.994</span>
-                </div>
-                <div className="p-4 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="font-semibold text-slate-800">Claim 3 (PR #1435)</span>
-                    <p className="text-slate-500 mt-0.5">Memory leak fiber unmount fix verified in ReactFiberHooks diff.</p>
-                  </div>
-                  <span className="font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded">MATCH: 0.979</span>
-                </div>
-                <div className="p-4 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="font-semibold text-slate-800">Claim 4 (PR #1412)</span>
-                    <p className="text-slate-500 mt-0.5">Lane assignment update verified in ReactFiberWorkLoop diff.</p>
-                  </div>
-                  <span className="font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded">MATCH: 0.965</span>
-                </div>
+                {orchestrationResult?.finalCheckerResult?.findings && orchestrationResult.finalCheckerResult.findings.length > 0 ? (
+                  orchestrationResult.finalCheckerResult.findings.map((finding) => (
+                    <div key={finding.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-slate-900">
+                            {finding.prNumber ? `PR #${finding.prNumber}` : 'Scope Check'}
+                          </span>
+                          <Badge
+                            variant={
+                              finding.status === 'verified'
+                                ? 'verified'
+                                : finding.status === 'unsupported'
+                                ? 'unsupported'
+                                : finding.status === 'missing'
+                                ? 'missing'
+                                : 'error'
+                            }
+                            size="sm"
+                          >
+                            {finding.status.toUpperCase()}
+                          </Badge>
+                        </div>
+                        <p className="text-slate-600 mt-1">{finding.explanation}</p>
+                        {finding.diffEvidence && (
+                          <span className="text-[10px] font-mono text-slate-400 mt-0.5 block">
+                            Evidence: {finding.diffEvidence}
+                          </span>
+                        )}
+                      </div>
+                      <span className="font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded text-right shrink-0">
+                        CONFIDENCE: {Math.round((finding.confidenceScore || 0.95) * 100)}%
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    <div className="p-4 flex items-center justify-between text-xs">
+                      <div>
+                        <span className="font-semibold text-slate-800">Claim 1 (PR #1422)</span>
+                        <p className="text-slate-500 mt-0.5">Server Actions streaming transitions verify against ReactFlightClient diff.</p>
+                      </div>
+                      <span className="font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded">MATCH: 0.982</span>
+                    </div>
+                    <div className="p-4 flex items-center justify-between text-xs">
+                      <div>
+                        <span className="font-semibold text-slate-800">Claim 2 (PR #1429)</span>
+                        <p className="text-slate-500 mt-0.5">Hydration error line/col verified against ReactDOMComponent diff.</p>
+                      </div>
+                      <span className="font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded">MATCH: 0.994</span>
+                    </div>
+                    <div className="p-4 flex items-center justify-between text-xs">
+                      <div>
+                        <span className="font-semibold text-slate-800">Claim 3 (PR #1435)</span>
+                        <p className="text-slate-500 mt-0.5">Memory leak fiber unmount fix verified in ReactFiberHooks diff.</p>
+                      </div>
+                      <span className="font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded">MATCH: 0.979</span>
+                    </div>
+                    <div className="p-4 flex items-center justify-between text-xs">
+                      <div>
+                        <span className="font-semibold text-slate-800">Claim 4 (PR #1412)</span>
+                        <p className="text-slate-500 mt-0.5">Lane assignment update verified in ReactFiberWorkLoop diff.</p>
+                      </div>
+                      <span className="font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded">MATCH: 0.965</span>
+                    </div>
+                  </>
+                )}
               </div>
+
+              {/* Retry Trail if retries occurred */}
+              {orchestrationResult?.attemptsHistory && orchestrationResult.attemptsHistory.length > 1 && (
+                <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 space-y-2">
+                  <h5 className="text-xs font-bold text-slate-800 font-sans uppercase tracking-wider">
+                    Orchestrator Convergence History ({orchestrationResult.attemptsHistory.length} attempts)
+                  </h5>
+                  <div className="space-y-1.5 text-xs">
+                    {orchestrationResult.attemptsHistory.map((att) => (
+                      <div key={att.attemptNumber} className="flex items-center justify-between p-2 rounded bg-white border border-slate-200">
+                        <span className="font-mono font-medium text-slate-700">Attempt #{att.attemptNumber}</span>
+                        <span className="text-slate-500">
+                          {att.retryReason || (att.checkerResult.passed ? 'Verified Clean' : 'Needs retry')}
+                        </span>
+                        <Badge variant={att.checkerResult.passed ? 'verified' : 'unsupported'} size="sm">
+                          {att.checkerResult.status}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

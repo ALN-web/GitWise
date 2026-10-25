@@ -11,6 +11,8 @@ import { GeneratedNotesModal } from './components/GeneratedNotesModal';
 import { EvaluationLabModal } from './components/EvaluationLabModal';
 import { VerificationDrawer } from './components/VerificationDrawer';
 import { RunHistoryModal, RunRecord } from './components/RunHistoryModal';
+import { GitWiseOrchestrator } from './agents/orchestrator';
+import { OrchestrationResult } from './agents/contracts';
 
 export const App: React.FC = () => {
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
@@ -61,41 +63,46 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleGenerate = (data: ReleaseFormData) => {
+  const [lastResult, setLastResult] = useState<OrchestrationResult | null>(null);
+
+  const handleGenerate = async (data: ReleaseFormData) => {
     setIsGenerating(true);
     setGeneratedData(data);
 
-    if (generationTimerRef.current) {
-      window.clearTimeout(generationTimerRef.current);
-    }
-    
-    // Simulate generation and diff token verification
-    generationTimerRef.current = window.setTimeout(() => {
+    try {
+      const orchestrator = new GitWiseOrchestrator();
+      const result = await orchestrator.runPipeline(
+        data.repoUrl,
+        data.startDate,
+        data.endDate,
+        data.releaseType
+      );
+
+      setLastResult(result);
       setIsGenerating(false);
       setIsGenerateModalOpen(true);
 
       const newRun: RunRecord = {
-        id: `GW-${Math.floor(1000 + Math.random() * 9000)}`,
-        repoUrl: data.repoUrl,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        releaseType: data.releaseType,
+        id: result.runId,
+        repoUrl: result.repo,
+        startDate: result.startDate,
+        endDate: result.endDate,
+        releaseType: result.releaseType,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        durationMs: 1240,
-        status: 'verified',
-        claimsCount: 4,
-        verifiedCount: 4,
+        durationMs: result.durationMs,
+        status: result.success ? 'verified' : 'failed',
+        claimsCount: result.finalCheckerResult.totalClaimsEvaluated,
+        verifiedCount: result.finalCheckerResult.verifiedCount,
       };
 
       setRuns((prev) => [newRun, ...prev]);
-    }, 700);
+    } catch (err: any) {
+      console.error('Orchestration pipeline execution error:', err);
+      setIsGenerating(false);
+    }
   };
 
   const handleCancelGeneration = () => {
-    if (generationTimerRef.current) {
-      window.clearTimeout(generationTimerRef.current);
-      generationTimerRef.current = null;
-    }
     setIsGenerating(false);
   };
 
@@ -176,6 +183,7 @@ export const App: React.FC = () => {
         isOpen={isGenerateModalOpen}
         onClose={() => setIsGenerateModalOpen(false)}
         data={generatedData}
+        orchestrationResult={lastResult}
       />
 
       <EvaluationLabModal
